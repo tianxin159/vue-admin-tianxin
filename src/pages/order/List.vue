@@ -6,9 +6,11 @@
     <!-- /按钮 -->
     <!-- 表格 -->
     <el-table :data="customers">
-      <el-table-column prop="id" label="编号"></el-table-column>
-      <el-table-column prop="realname" label="姓名"></el-table-column>
-      <el-table-column prop="telephone" label="联系方式"></el-table-column>
+      <el-table-column prop="id" label="订单编号"></el-table-column>
+      <el-table-column prop="order_time" label="下单时间"></el-table-column>
+      <el-table-column prop="total" label="总价"></el-table-column>
+        <el-table-column prop="status" label="状态"></el-table-column>
+        <el-table-column prop="customer_id" label="顾客id"></el-table-column>
       <el-table-column label="操作">
         <template v-slot="slot">
           <a href="" @click.prevent="toDeleteHandler(slot.row.id)">删除</a>
@@ -22,22 +24,20 @@
     <!-- /分页结束 -->
     <!-- 模态框 -->
     <el-dialog
-      title="录入顾客信息"
+      title="录入订单信息"
       :visible.sync="visible"
       width="60%">
       <el-form :model="form" label-width="80px">
-        <el-form-item label="用户名">
-          <el-input v-model="form.username"></el-input>
+        <el-form-item label="下单时间">
+          <el-input v-model="form.order_time"></el-input>
         </el-form-item>
-        <el-form-item label="密码">
-          <el-input type="password" v-model="form.password"></el-input>
+        <el-form-item label="总价">
+          <el-input type="password" v-model="form.total"></el-input>
         </el-form-item>
-        <el-form-item label="真实姓名">
-          <el-input v-model="form.realname"></el-input>
+        <el-form-item label="状态">
+          <el-input v-model="form.status"></el-input>
         </el-form-item>
-        <el-form-item label="手机号">
-          <el-input v-model="form.telephone"></el-input>
-        </el-form-item>
+    
       </el-form>
 
       <span slot="footer" class="dialog-footer">
@@ -57,7 +57,7 @@ export default {
   // 用于存放网页中需要调用的方法
   methods:{
     loadData(){
-      let url = "http://localhost:6677/customer/findAll"
+      let url = "http://localhost:6677/order/findAll"
       request.get(url).then((response)=>{
         // 将查询结果设置到customers中，this指向外部函数的this
         this.customers = response.data;
@@ -69,7 +69,7 @@ export default {
       // request.post(url,this.form)
       // 查询字符串 type=customer&age=12
       // 通过request与后台进行交互，并且要携带参数
-      let url = "http://localhost:6677/customer/saveOrUpdate";
+      let url = "http://localhost:6677/order/saveOrUpdate";
       request({
         url,
         method:"POST",
@@ -96,7 +96,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        let url= "http://localhost:6677/customer/deleteById?id="+id;
+        let url= "http://localhost:6677/order/deleteById?id="+id;
         request.get(url).then((response)=>{
 this.loadData();
         })
@@ -117,7 +117,7 @@ this.loadData();
     },
     toAddHandler(){
       this.form={
-        type:"customer"
+        type:"order"
       }
       this.visible = true;
     }
@@ -126,9 +126,9 @@ this.loadData();
   data(){
     return {
       visible:false,
-      customers:[],
+      orders:[],
       form:{
-        type:"customer"
+        type:"order"
       }
     }
   },
